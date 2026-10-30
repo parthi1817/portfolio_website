@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  --font-anton: "Anton", sans-serif;
+  --font-caveat: "Caveat", cursive;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --color-brand-bg: #0a0a0a;
+  --color-brand-card: #111111;
+  --color-brand-border: #1f1f1f;
+  --color-brand-red: #d4161c;
+  --color-brand-red-bright: #ff3b3b;
+  --color-brand-line: #2a1213;
+  --color-brand-text: #f3f0ee;
+  --color-brand-muted: #9a9490;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --card: #111111;
+  --red: #d4161c;
+  --red2: #ff3b3b;
+  --tx: #f3f0ee;
+  --mut: #9a9490;
+  --ln: #2a1213;
+  color-scheme: dark;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #261113;
+  border-radius: 4px;
+  border: 1px solid #d4161c33;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d4161c;
+}
+
+/* Glow & Utilities */
+.text-glow-red {
+  text-shadow: 0 0 20px rgba(212, 22, 28, 0.6), 0 0 40px rgba(212, 22, 28, 0.3);
+}
+
+.box-glow-red {
+  box-shadow: 0 0 35px rgba(212, 22, 28, 0.25);
+}
+
+.box-glow-red-hover:hover {
+  box-shadow: 0 0 45px rgba(212, 22, 28, 0.45);
+}
+
+.border-crimson-line {
+  border-color: #2a1213;
+}
+
+/* Grid Background */
+.bg-tech-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(212, 22, 28, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(212, 22, 28, 0.05) 1px, transparent 1px);
+}
+
+/* Hero Portrait Mask */
+.hero-portrait-mask {
+  filter: contrast(1.1) saturate(0.9) brightness(0.95) drop-shadow(0 0 45px rgba(212, 22, 28, 0.5));
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+}
+
+/* Keyframes */
+@keyframes letterRise {
+  0% {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-letter-rise {
+  display: inline-block;
+  transform: translateY(120%);
+  opacity: 0;
+  animation: letterRise 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 4s ease-in-out infinite;
+}
