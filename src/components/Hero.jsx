@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { portfolioData } from '../data/portfolioData';
-import parthibanPhoto from '../assets/parthiban.webp';
+import parthibanPhoto from '../assets/parthiban-hero.png';
 import { MapPin, Sparkles, Terminal, ArrowDown, FolderCode } from 'lucide-react';
 
 export default function Hero({ onOpenTerminal }) {
   const [typedRole, setTypedRole] = useState('');
-  const [photoOffset, setPhotoOffset] = useState(0);
+  const [photoOffset, setPhotoOffset] = useState({ x: 0, y: 0 });
   const [statsValues, setStatsValues] = useState({ stat0: 0, stat1: 0, stat2: 0 });
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const heroRef = useRef(null);
 
   // Typewriter effect for role
@@ -32,7 +33,7 @@ export default function Hero({ onOpenTerminal }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setHasLoaded(true);
-      const duration = 1400; // ms
+      const duration = 1400;
       const steps = 40;
       const stepTime = duration / steps;
       let currentStep = 0;
@@ -40,7 +41,6 @@ export default function Hero({ onOpenTerminal }) {
       const counterInterval = setInterval(() => {
         currentStep++;
         const progress = Math.min(1, currentStep / steps);
-        // Easing out cubic
         const easeOut = 1 - Math.pow(1 - progress, 3);
 
         setStatsValues({
@@ -60,11 +60,12 @@ export default function Hero({ onOpenTerminal }) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Parallax on mouse move
+  // Parallax on mouse move (subtle X + Y)
   useEffect(() => {
     const handleMouseMove = (e) => {
       const xRatio = e.clientX / window.innerWidth - 0.5;
-      setPhotoOffset(xRatio * 24);
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      setPhotoOffset({ x: xRatio * 18, y: yRatio * 8 });
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -76,17 +77,26 @@ export default function Hero({ onOpenTerminal }) {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-[720px] lg:min-h-[780px] overflow-hidden pt-28 pb-16 border-b border-[#2a1213]"
+      className="relative min-h-[750px] lg:min-h-[820px] overflow-hidden pt-28 pb-0 border-b border-[#2a1213]"
       style={{
-        background: 'radial-gradient(ellipse at 65% 25%, #5a0a0e 0%, #150304 45%, #0a0a0a 75%)',
+        background: 'radial-gradient(ellipse at 55% 30%, #5a0a0e 0%, #150304 45%, #0a0a0a 75%)',
       }}
     >
       {/* Background Subtle Tech Grid */}
-      <div className="absolute inset-0 bg-tech-grid opacity-35 pointer-events-none" />
+      <div className="absolute inset-0 bg-tech-grid opacity-30 pointer-events-none" />
 
-      {/* Giant "PORTFOLIO" Typography Behind the Subject */}
+      {/* Ambient red glow behind the portrait area */}
       <div
-        className="absolute top-12 md:top-8 left-1/2 -translate-x-1/2 font-['Anton'] text-[clamp(88px,18.5vw,250px)] text-[#d4161c] leading-none tracking-[0.02em] whitespace-nowrap opacity-[0.88] select-none pointer-events-none flex z-[1] drop-shadow-[0_0_60px_rgba(212,22,28,0.35)]"
+        className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none z-[0]"
+        style={{
+          background: 'radial-gradient(circle, rgba(212, 22, 28, 0.18) 0%, rgba(212, 22, 28, 0.06) 40%, transparent 70%)',
+          filter: 'blur(40px)',
+        }}
+      />
+
+      {/* Giant "PORTFOLIO" Typography — Behind the Subject */}
+      <div
+        className="absolute top-16 md:top-12 left-1/2 -translate-x-1/2 font-['Anton'] text-[clamp(80px,17vw,230px)] text-[#d4161c] leading-none tracking-[0.02em] whitespace-nowrap opacity-[0.85] select-none pointer-events-none flex z-[1] drop-shadow-[0_0_60px_rgba(212,22,28,0.35)]"
       >
         {portfolioLetters.map((char, i) => (
           <span
@@ -101,34 +111,37 @@ export default function Hero({ onOpenTerminal }) {
         ))}
       </div>
 
-      {/* Parthiban's Masked Cutout Photo */}
+      {/* ============== LARGE CENTER PORTRAIT (like reference) ============== */}
       <div
         className="absolute bottom-0 left-1/2 z-[2] pointer-events-none transition-transform duration-300 ease-out will-change-transform flex justify-center items-end"
         style={{
-          transform: `translateX(calc(-30% + ${photoOffset}px))`,
-          height: 'clamp(460px, 68vh, 660px)',
+          transform: `translateX(calc(-50% + ${photoOffset.x}px)) translateY(${photoOffset.y}px)`,
         }}
       >
         <img
           src={parthibanPhoto}
           alt="Parthiban S - Backend Developer"
-          className="hero-portrait-mask h-full w-auto max-w-[90vw] object-bottom object-contain opacity-0 animate-[fadeIn_1.4s_1.8s_forwards]"
+          onLoad={() => setImageLoaded(true)}
+          className={`hero-portrait-mask w-auto max-w-[85vw] sm:max-w-[55vw] md:max-w-[45vw] lg:max-w-[38vw] object-bottom object-contain transition-opacity duration-[1.4s] ease-out ${
+            imageLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
           style={{
-            animationFillMode: 'forwards',
+            height: 'clamp(420px, 72vh, 700px)',
+            filter: 'contrast(1.08) brightness(0.95) saturate(0.92) drop-shadow(0 0 50px rgba(212, 22, 28, 0.45))',
           }}
         />
       </div>
 
-      {/* Bottom Gradient Overlay to seamlessly transition to content */}
-      <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-[3] pointer-events-none" />
+      {/* Bottom Gradient Overlay — seamless bleed into next section */}
+      <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/85 to-transparent z-[3] pointer-events-none" />
 
-      {/* Hero Content Container */}
-      <div className="max-w-[1180px] mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-between min-h-[580px]">
+      {/* ============== HERO CONTENT ============== */}
+      <div className="max-w-[1180px] mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-between min-h-[620px]">
         {/* Left Intro Block */}
         <div className="max-w-xl pt-8 sm:pt-14 pb-8">
           {/* Handwritten greeting */}
           <div className="font-['Caveat'] text-3xl sm:text-4xl text-[#f3f0ee] tracking-wide mb-1 drop-shadow">
-            Hello, I’m
+            Hello, I'm
           </div>
 
           {/* Bold Name */}
@@ -179,8 +192,8 @@ export default function Hero({ onOpenTerminal }) {
           </div>
         </div>
 
-        {/* Floating Tagline (Desktop) */}
-        <div className="hidden lg:block absolute right-[230px] top-[260px] z-10 max-w-[170px] text-xs leading-relaxed text-[#9a9490] border-l-2 border-[#d4161c] pl-3 py-1 bg-[#0a0a0a]/60 backdrop-blur-sm rounded-r">
+        {/* Floating Tagline (Desktop) — positioned to sit beside the portrait */}
+        <div className="hidden lg:block absolute right-8 top-[200px] z-10 max-w-[170px] text-xs leading-relaxed text-[#9a9490] border-l-2 border-[#d4161c] pl-3 py-1 bg-[#0a0a0a]/60 backdrop-blur-sm rounded-r">
           <div className="text-[#ff3b3b] font-medium text-xs mb-0.5 flex items-center gap-1">
             <Sparkles className="w-3 h-3" />
             <span>Mission</span>
@@ -188,8 +201,8 @@ export default function Hero({ onOpenTerminal }) {
           {portfolioData.profile.tagline}
         </div>
 
-        {/* Floating Stats Block */}
-        <div className="mt-8 lg:mt-0 lg:absolute lg:right-6 lg:bottom-12 z-10 grid grid-cols-3 lg:grid-cols-1 gap-3 sm:gap-4 lg:w-[170px]">
+        {/* Floating Stats Block — right side */}
+        <div className="mt-8 lg:mt-0 lg:absolute lg:right-6 lg:bottom-16 z-10 grid grid-cols-3 lg:grid-cols-1 gap-3 sm:gap-4 lg:w-[170px]">
           {portfolioData.stats.map((stat, i) => {
             const currentValue = i === 0 ? statsValues.stat0 : i === 1 ? statsValues.stat1 : statsValues.stat2;
             return (
@@ -219,4 +232,3 @@ export default function Hero({ onOpenTerminal }) {
     </section>
   );
 }
-
